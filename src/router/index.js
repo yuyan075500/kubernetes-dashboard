@@ -68,7 +68,7 @@ export const constantRoutes = [
   {
     path: '/controller',
     component: Layout,
-    redirect: '/controller/node',
+    redirect: '/controller/pod',
     name: 'Controller',
     meta: { title: '工作负载', icon: 'menu-controller' },
     children: [
@@ -164,7 +164,7 @@ export const constantRoutes = [
   {
     path: '/storage',
     component: Layout,
-    redirect: '/storage/node',
+    redirect: '/storage/pv',
     name: 'Storage',
     meta: { title: '存储', icon: 'menu-storage' },
     children: [
@@ -172,19 +172,19 @@ export const constantRoutes = [
         path: 'pv',
         name: 'PV',
         component: () => import('@/views/storage/pv/index'),
-        meta: { title: 'PVs', icon: 'sub-menu-pv' }
+        meta: { title: 'Persistent Volume Claims', icon: 'sub-menu-pv' }
       },
       {
         path: 'pvc',
         name: 'PVC',
         component: () => import('@/views/storage/pvc/index'),
-        meta: { title: 'PVCs', icon: 'sub-menu-pvc' }
+        meta: { title: 'Persistent Volumes', icon: 'sub-menu-pvc' }
       },
       {
         path: 'sc',
         name: 'SC',
         component: () => import('@/views/storage/sc/index'),
-        meta: { title: 'SCs', icon: 'sub-menu-sc' }
+        meta: { title: 'Storage Classes', icon: 'sub-menu-sc' }
       }
     ]
   }

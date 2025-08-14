@@ -54,10 +54,16 @@ export default {
     handleLink(item) {
       const { redirect, path } = item
       if (redirect) {
-        this.$router.push(redirect)
+        this.$router.push({
+          path: redirect,
+          query: { 'cluster': this.$route.query.cluster }
+        })
         return
       }
-      this.$router.push(this.pathCompile(path))
+      this.$router.push({
+        path: this.pathCompile(path),
+        query: { 'cluster': this.$route.query.cluster }
+      })
     }
   }
 }
