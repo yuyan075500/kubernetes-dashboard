@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: '自动化运维平台',
+  title: process.env.VUE_APP_TITLE,
 
   /**
    * @type {boolean} true | false

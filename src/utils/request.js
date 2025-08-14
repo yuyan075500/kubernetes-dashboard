@@ -7,7 +7,7 @@ import { getToken } from '@/utils/auth'
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 5000 // 浏览器请求超时时间，单位：毫秒
+  timeout: 10000 // 浏览器请求超时时间，单位：毫秒
 })
 
 // 请求拦截器
@@ -17,13 +17,12 @@ service.interceptors.request.use(
 
     if (store.getters.token) {
       // 指定后端认证请求头的参数名，根据实际情况修改
-      config.headers['X-Token'] = getToken()
+      config.headers['Authorization'] = `Bearer ${getToken()}`
     }
     return config
   },
   error => {
     // 请求错误动作
-    console.log(error)
     return Promise.reject(error)
   }
 )
@@ -31,43 +30,45 @@ service.interceptors.request.use(
 // 返回拦截器
 service.interceptors.response.use(
   response => {
+    // 如果响应类型为application/zip，则直接返回响应，不进行后续处理
+    const contentType = response.headers['content-type']
+    if (contentType && contentType.includes('application/zip')) {
+      return response
+    }
+
     const res = response.data
-
-    // 指定后端返回的正确业务状态码，默认为0
+    // 业务状态码为非0的请求处理（0表示正常的业务状态码）
     if (res.code !== 0) {
-      // 业务状态码为0的请求处理
-
-      Message({
-        message: res.message || 'Error',
-        type: 'error',
-        duration: 5 * 1000
-      })
-
-      // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
-        // to re-login
-        MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-          confirmButtonText: 'Re-Login',
-          cancelButtonText: 'Cancel',
+      // 如果状态码为90514表示Token无效或Token过期，进行特殊处理
+      if (res.code === 90514) {
+        // 重新登录
+        MessageBox.confirm('无效的Token或认证已过期，请重新登录。', {
+          confirmButtonText: '重新登录',
+          cancelButtonText: '关闭',
           type: 'warning'
         }).then(() => {
           store.dispatch('user/resetToken').then(() => {
             location.reload()
           })
         })
+      } else {
+        Message({
+          message: res.msg,
+          type: 'error',
+          duration: 2 * 1000
+        })
+        return Promise.reject(new Error(res.msg))
       }
-      return Promise.reject(new Error(res.message || 'Error'))
     } else {
       return res
     }
   },
   error => {
-    // 返回的HTTP状态码非200的请求处理
-    console.log('err' + error)
+    // HTTP状态码非200的请求处理
     Message({
-      message: error.message,
+      message: error.response.data.msg || '未知的错误请求，请联系管理员',
       type: 'error',
-      duration: 5 * 1000
+      duration: 2 * 1000
     })
     return Promise.reject(error)
   }
