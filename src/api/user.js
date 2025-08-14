@@ -11,7 +11,7 @@ export function getInfo() {
 // 用户注销
 export function logout() {
   return request({
-    url: '/api/auth/login',
+    url: '/api/auth/logout',
     method: 'post'
   })
 }

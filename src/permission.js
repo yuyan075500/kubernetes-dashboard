@@ -28,19 +28,19 @@ router.beforeEach(async(to, from, next) => {
       try {
         // 获取用户信息
         await store.dispatch('user/getInfo')
-        next({ ...to, replace: true })
+        next()
       } catch (error) {
         // 移除token并回到登录dmdm
         await store.dispatch('user/resetToken')
         Message.error(error || 'Has Error')
-        next(`/login?redirect=${to.path}`)
-        NProgress.done()
+        window.location.href = `/login?redirect=/kubernetes/cluster${to.fullPath}`
       }
     }
   } else {
-    next(`/login?redirect=${to.path}`)
-    NProgress.done()
+    console.log(to.fullPath)
+    window.location.href = `/login?redirect=/kubernetes/cluster${to.fullPath}`
   }
+  NProgress.done()
 })
 
 router.afterEach(() => {

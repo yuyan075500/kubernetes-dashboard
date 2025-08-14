@@ -47,6 +47,7 @@ export const constantRoutes = [
 const createRouter = () => new Router({
   mode: 'history',
   scrollBehavior: () => ({ y: 0 }),
+  base: '/kubernetes/cluster/',
   routes: constantRoutes
 })
 
