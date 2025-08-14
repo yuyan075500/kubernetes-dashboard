@@ -37,7 +37,6 @@ router.beforeEach(async(to, from, next) => {
       }
     }
   } else {
-    console.log(to.fullPath)
     window.location.href = `/login?redirect=/kubernetes/cluster${to.fullPath}`
   }
   NProgress.done()
