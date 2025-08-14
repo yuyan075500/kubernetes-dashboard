@@ -1,21 +1,32 @@
-# 声明
-此项目根据开源项目[vue-admin-template](https://github.com/PanJiaChen/vue-admin-template/tree/master)更改而来，主要基于该项目进行了小部分更改以便快速创建一个前端项目，你可以访问[官方文档](https://panjiachen.github.io/vue-element-admin-site/zh/guide/)获取详细信息
-# 修改内容
-* 增加容器打包配置，使用Nginx运行。
-* 更改默认的路由模式为`history`。
-* 升级`element-ui`的版本为`2.15.14`。
-* 删除`stage`环境配置。
-* 对登录页进行了调整。
-* 删除除Dashboard以外，其它所有页面相关配置和文件。
-* 删除个人信息页面
-* 404页面修改。
-* 默认开启左上角Logo。
-* 添加了部分配置、代码的注释。
-* 更改默认的业务状态码`code`值为`0`。
-* 删除模拟数据。
-# 开发环境调试
-建议使用vscode进行开发调试。
-1. 安装依赖
+# IDSphere Kubernetes 管理平台介绍
+Kubernetes 多集群管理（持续开发中...）
+## 架构设计
+项目采用前后端分离架构设计，项目地址如下：
+| 项目   | 项目地址 |
+|:------|:-----|
+| 前端   | https://github.com/yuyan075500/kubernetes-dashboard    |                                                                                                              |
+| 后端   | https://github.com/yuyan075500/idsphere    |
+
+# 配置文件说明
+```shell
+# 环境名称
+ENV = 'development'
+
+# 后端服务器地址
+VUE_APP_BASE_API = '/'
+
+# 应用名称
+VUE_APP_TITLE = 'Kubernetes 管理平台'
+```
+* [x] **ENV**：环境名称，开发环境名称为 `development`，对应配置文件名为 `.env.development`，生产环境名称为 `production`，对应配置文件名为 `.env.production`。
+* [x] **VUE_APP_BASE_API**：默认，统一设置为 `/` 。
+* [x] **VUE_APP_TITLE**：自定义系统名称，影响浏览器页面标题和进系统后左上角名称。
+>   
+> 注意：由于项目使用前后端分离架构，为实现 `SSO` 自动跳转功能，因此 `VUE_APP_BASE_API` 默认为 `/`。在开发和生产环境都需要增加一个代理层（`Nginx`、`Traefix` 等）实现动静分离，具体可以参考 [搭建开发环境](https://github.com/yuyan075500/idsphere/blob/main/deploy/dev.md) 和 [项目部署](https://github.com/yuyan075500/idsphere?tab=readme-ov-file#%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2) 相关文档。
+>   
+# 开发调试
+开发环境建议使用 `VS Code` 工具，配置文件位于项目根目录，配置文件名为 `.env.development`。
+1. 安装项目依赖。
 ```shell
 npm install
 ```
@@ -23,32 +34,17 @@ npm install
 ```shell
 npm run dev
 ```
-项目运行成功后默认监听`9258`端口，如果想变更端口可参考`vue.config.js`文件中名为`port`常量的相关使用说明。
+项目运行成功后默认监听 `9257` 端口，如果想变更端口可以通过 `vue.config.js` 配置文件修改，端口相关变量为 `port`。
 # 生产环境部署
-1. 安装依赖
+生产环境配置文件位于项目根目录，配置文件名为 `.env.production`。
+1. 安装项目依赖。
 ```shell
 npm install
 ```
-2. 项目编译
+2. 项目编译。  
 ```shell
 npm run build:prod
 ```
-3. 打包镜像
-打包镜像参考`Dockerfile`文件中的配置即可，可根据自己的喜好更改。
-# 项目特殊文件说明
-* `vue.config.js`：项目基本配置信息。
-* `src/permission.js`：权限拦截器，用于校验用户是否已登录。
-* `src/utils/request.js`：与后端交互的请求拦截器，用于处理前后端交换的请求，封装了`axios`。
-# 项目基本使用
-## 更改页面标题
-修改`src/settings.js`文件中的`title`名称。
-## 开启或关闭左上角Logo
-更改`src/settings.js`文件中的`sidebarLogo`值即可，`true`表示开启，`false`表示关闭。
-## 更改页面Icon图标
-替换`public/favicon.ico`文件为你想的的图标。
-## 登录页修改
-文件路径为`src/views/login/index.vue`。
-## 右上角头像下拉菜单更改
-文件路径为`src/layout/components/Navbar.vue`。
-## 左上角Logo修改
-文件路径为`src/layout/components/Sidebar/Logo.vue`。
+3. 打包容器镜像  
+打包容器镜像参考项目根目录的 `Dockerfile` 文件，个性化打包需求可按需修改相关配置。
+
