@@ -106,7 +106,7 @@ export const constantRoutes = [
         path: 'cronjob',
         name: 'Cronjob',
         component: () => import('@/views/controller/cronjob/index'),
-        meta: { title: 'Cronjobs', icon: 'sub-menu-cronjob' }
+        meta: { title: 'Cron Jobs', icon: 'sub-menu-cronjob' }
       }
     ]
   },
