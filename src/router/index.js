@@ -88,13 +88,13 @@ export const constantRoutes = [
         path: 'daemonset',
         name: 'Daemonset',
         component: () => import('@/views/controller/daemonset/index'),
-        meta: { title: 'Daemonsets', icon: 'sub-menu-daemonset' }
+        meta: { title: 'DaemonSets', icon: 'sub-menu-daemonset' }
       },
       {
         path: 'statefulset',
-        name: 'Statefulset',
+        name: 'StatefulSet',
         component: () => import('@/views/controller/statefulset/index'),
-        meta: { title: 'Statefulsets', icon: 'sub-menu-statefulset' }
+        meta: { title: 'StatefulSets', icon: 'sub-menu-statefulset' }
       },
       {
         path: 'job',

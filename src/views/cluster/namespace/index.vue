@@ -4,7 +4,7 @@
     <!-- 表格搜索 -->
     <el-form :inline="true">
       <el-form-item label="名称">
-        <el-input v-model="queryParams.name" placeholder="" size="small" prefix-icon="el-icon-search" clearable />
+        <el-input v-model="queryParams.name" placeholder="请输入名称空间名称" size="small" prefix-icon="el-icon-search" clearable />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="searchList">查询</el-button>
@@ -18,13 +18,6 @@
       </el-col>
     </el-row>
 
-    <!-- 表格 -->
-    <!-- <namespace-table
-      v-loading="loading"
-      :table-data="tableData"
-      @edit="handleEdit"
-      @delete="handleDelete"
-    /> -->
     <!-- 表格 -->
     <namespace-table
       v-loading="loading"
@@ -87,7 +80,7 @@ export default {
         uuid: sessionStorage.getItem(this.$route.query.cluster),
         name: '',
         page: 1,
-        limit: 15
+        limit: 10
       },
       namespaceAddDialog: false
     }

@@ -1,9 +1,34 @@
 <template>
   <div class="navbar">
-    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    <!-- 左边：汉堡按钮 + 面包屑 -->
+    <div class="left">
+      <hamburger
+        :is-active="sidebar.opened"
+        class="hamburger-container"
+        @toggleClick="toggleSideBar"
+      />
+      <breadcrumb class="breadcrumb-container" />
+    </div>
 
-    <breadcrumb class="breadcrumb-container" />
+    <!-- 中间：只居中命名空间选择框 -->
+    <div v-if="isShow" class="center">
+      <el-select
+        v-model="selectedNamespace"
+        filterable
+        size="small"
+        placeholder="名称空间选择"
+        class="namespace-select"
+      >
+        <el-option
+          v-for="item in namespaceList"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
+    </div>
 
+    <!-- 右边：用户信息 -->
     <div class="right">
       <el-dropdown trigger="click" placement="bottom">
         <div class="right-item">
@@ -32,12 +57,28 @@ export default {
     Breadcrumb,
     Hamburger
   },
+  data() {
+    return {
+      selectedNamespace: sessionStorage.getItem('namespace') || '',
+      namespaceList: [
+        { label: 'All Namespace', value: '' },
+        { label: 'default', value: 'default' },
+        { label: 'kube-system', value: 'kube-system' }
+      ]
+    }
+  },
   computed: {
-    ...mapGetters([
-      'sidebar',
-      'avatar',
-      'name'
-    ])
+    ...mapGetters(['sidebar', 'avatar', 'name']),
+    isShow() {
+      const hiddenRoutes = ['/dashboard', '/dashboard/node', '/dashboard/namespace']
+      return !hiddenRoutes.includes(this.$route.path)
+    }
+  },
+  watch: {
+    selectedNamespace(val) {
+      sessionStorage.setItem('namespace', val)
+      location.reload()
+    }
   },
   methods: {
     toggleSideBar() {
@@ -54,92 +95,73 @@ export default {
 <style lang="scss" scoped>
 .navbar {
   height: 50px;
-  overflow: hidden;
-  position: relative;
-  background: #fff;
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
-
-  .hamburger-container {
-    line-height: 46px;
-    height: 100%;
-    float: left;
-    cursor: pointer;
-    transition: background .3s;
-    -webkit-tap-highlight-color:transparent;
-
-    &:hover {
-      background: rgba(0, 0, 0, .025)
-    }
-  }
-
-  .breadcrumb-container {
-    float: left;
-  }
-}
-// 个人信息页面头像
-.avatar-uploader {
-  .el-upload {
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-
-    .avatar {
-      width: 130px;
-      height: 130px;
-      display: block;
-    }
-  }
-  .el-upload:hover {
-    border-color: #409EFF;
-  }
-}
-
-// 右上角用户头像与用户名
-.right {
-  flex: 7;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  height: 50px !important;
-  padding-right: 20px;
+  justify-content: space-between;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  padding: 0 20px 0 0px;
+}
 
-  .right-item {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    &:hover {
-      background: rgba(0, 0, 0, 0.025);
-    }
-
-    .right-item-img {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-    }
-
-    .user-name {
-      margin: 0px 5px;
-    }
+/* 左边：汉堡按钮 + 面包屑 */
+.left {
+  display: flex;
+  align-items: center;
+}
+.hamburger-container {
+  cursor: pointer;
+  line-height: 50px;
+  transition: background 0.3s;
+  &:hover {
+    background: rgba(0, 0, 0, 0.025);
   }
 }
-// 个人信息页面按钮
-.drawer-footer{
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  border-top: 1px solid #e8e8e8;
-  padding: 10px 16px;
-  text-align: right;
-  background-color: white;
+.breadcrumb-container {
+  margin-left: 10px;
 }
 
-// 菜单权限和基础信息高度固定
-.down-tree{
-  height: 360px;
-  display: block;
-  overflow-y: auto;
+/* 中间居中：只放 namespace 下拉框 */
+// .center {
+//   flex: 1;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+// }
+.center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+.namespace-select {
+  min-width: 200px;
+}
+
+/* 右边：用户信息 */
+.right {
+  display: flex;
+  align-items: center;
+  height: 50px;
+}
+.right-item {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  &:hover {
+    background: rgba(0, 0, 0, 0.025);
+  }
+
+  .right-item-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+
+  .user-name {
+    margin: 0 5px;
+  }
 }
 </style>
