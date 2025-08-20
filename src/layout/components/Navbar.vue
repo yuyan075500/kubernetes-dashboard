@@ -63,7 +63,8 @@ export default {
       namespaceList: [
         { label: 'All Namespace', value: '' },
         { label: 'default', value: 'default' },
-        { label: 'kube-system', value: 'kube-system' }
+        { label: 'kube-system', value: 'kube-system' },
+        { label: 'monitoring', value: 'monitoring' }
       ]
     }
   },
