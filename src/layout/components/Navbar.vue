@@ -20,7 +20,7 @@
         class="namespace-select"
       >
         <el-option
-          v-for="item in namespaceList"
+          v-for="item in namespaceListComputed"
           :key="item.value"
           :label="item.label"
           :value="item.value"
@@ -59,20 +59,23 @@ export default {
   },
   data() {
     return {
-      selectedNamespace: sessionStorage.getItem('namespace') || '',
-      namespaceList: [
-        { label: 'All Namespace', value: '' },
-        { label: 'default', value: 'default' },
-        { label: 'kube-system', value: 'kube-system' },
-        { label: 'monitoring', value: 'monitoring' }
-      ]
+      selectedNamespace: sessionStorage.getItem('namespace') || ''
     }
   },
   computed: {
-    ...mapGetters(['sidebar', 'avatar', 'name']),
+    ...mapGetters(['sidebar', 'avatar', 'name', 'namespaces']),
     isShow() {
       const hiddenRoutes = ['/dashboard', '/dashboard/node', '/dashboard/namespace']
       return !hiddenRoutes.includes(this.$route.path)
+    },
+    namespaceListComputed() {
+      const base = [{ label: 'All Namespace', value: '' }]
+      const extra = this.namespaces.map(ns => ({
+        label: ns.name,
+        value: ns.name
+      }))
+      console.log(extra)
+      return base.concat(extra)
     }
   },
   watch: {

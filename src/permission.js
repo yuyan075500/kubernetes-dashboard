@@ -28,6 +28,10 @@ router.beforeEach(async(to, from, next) => {
       try {
         // 获取用户信息
         await store.dispatch('user/getInfo')
+
+        // 获取名称空间
+        await store.dispatch('user/getNamespace', sessionStorage.getItem(to.query.cluster))
+
         next()
       } catch (error) {
         // 移除token并回到登录dmdm

@@ -1,4 +1,5 @@
 import { logout, getInfo } from '@/api/user'
+import { getNamespaceListAll } from '@/api/cluster/namespace'
 import { getToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -6,6 +7,7 @@ const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
+    namespaces: '',
     avatar: ''
   }
 }
@@ -22,13 +24,16 @@ const mutations = {
   SET_NAME: (state, name) => {
     state.name = name
   },
+  SET_NAMESPACES: (state, namespaces) => {
+    state.namespaces = namespaces
+  },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
   }
 }
 
 const actions = {
-  // get user info
+  // 获取用户信息
   getInfo({ commit }) {
     return new Promise((resolve, reject) => {
       getInfo().then(response => {
@@ -42,7 +47,22 @@ const actions = {
     })
   },
 
-  // user logout
+  // 获取名称空间
+  getNamespace({ commit }, cluster) {
+    return new Promise((resolve, reject) => {
+      getNamespaceListAll({ 'uuid': cluster }).then(response => {
+        const result = response.data.items.map(item => {
+          return { 'name': item.metadata.name, 'value': item.metadata.uid }
+        })
+        commit('SET_NAMESPACES', result)
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  // 注销
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {

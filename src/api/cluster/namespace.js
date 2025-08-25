@@ -8,3 +8,12 @@ export function getNamespaceList(params) {
     params
   })
 }
+
+// 获取名称空间列表（所有）
+export function getNamespaceListAll(params) {
+  return request({
+    url: '/api/v1/kubernetes/namespace/all',
+    method: 'get',
+    params
+  })
+}
