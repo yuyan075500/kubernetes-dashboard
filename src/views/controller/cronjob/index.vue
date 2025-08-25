@@ -56,7 +56,7 @@ export default {
         namespace: sessionStorage.getItem('namespace'),
         name: '',
         page: 1,
-        limit: 15
+        limit: 10
       }
     }
   },

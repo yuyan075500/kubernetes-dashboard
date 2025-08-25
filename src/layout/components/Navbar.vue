@@ -74,7 +74,6 @@ export default {
         label: ns.name,
         value: ns.name
       }))
-      console.log(extra)
       return base.concat(extra)
     }
   },
