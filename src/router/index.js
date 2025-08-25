@@ -172,13 +172,13 @@ export const constantRoutes = [
         path: 'pv',
         name: 'PV',
         component: () => import('@/views/storage/pv/index'),
-        meta: { title: 'Persistent Volume Claims', icon: 'sub-menu-pv' }
+        meta: { title: 'Persistent Volumes', icon: 'sub-menu-pv' }
       },
       {
         path: 'pvc',
         name: 'PVC',
         component: () => import('@/views/storage/pvc/index'),
-        meta: { title: 'Persistent Volumes', icon: 'sub-menu-pvc' }
+        meta: { title: 'Persistent Volume Claims', icon: 'sub-menu-pvc' }
       },
       {
         path: 'sc',

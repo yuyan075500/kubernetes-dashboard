@@ -1,31 +1,101 @@
 <template>
-  <div class="dashboard-container">
-    <div class="dashboard-text">UUID: {{ uuid }}</div>
+  <div class="app-container">
+
+    <!-- 表格搜索 -->
+    <el-form :inline="true">
+      <el-form-item label="名称">
+        <el-input v-model="queryParams.name" placeholder="请输入SC名称" size="small" prefix-icon="el-icon-search" clearable />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="searchList">查询</el-button>
+      </el-form-item>
+    </el-form>
+
+    <!-- 表格头 -->
+    <el-row :gutter="10">
+      <el-col :span="1.5">
+        <el-button type="primary" plain icon="el-icon-plus" size="mini">新增</el-button>
+      </el-col>
+    </el-row>
+
+    <!-- 表格 -->
+    <storage-class-table
+      v-loading="loading"
+      :table-data="tableData"
+    />
+
+    <!-- 分页 -->
+    <el-pagination
+      background
+      :current-page="queryParams.page"
+      :page-sizes="[15, 20, 50, 100, 500]"
+      :page-size="queryParams.limit"
+      :total="total"
+      layout="total, sizes, prev, pager, next, jumper"
+      @size-change="handlePageSizeChange"
+      @current-change="handlePageChange"
+    />
   </div>
 </template>
 
 <script>
+import { getStorageClassList } from '@/api/storage/sc'
+import StorageClassTable from './table'
+
 export default {
-  name: 'Dashboard',
+  components: {
+    StorageClassTable
+  },
   data() {
     return {
-      // 集群 UUID
-      uuid: sessionStorage.getItem(this.$route.query.cluster)
+      loading: true,
+      total: 0,
+      tableData: [],
+      queryParams: {
+        uuid: sessionStorage.getItem(this.$route.query.cluster),
+        name: '',
+        page: 1,
+        limit: 10
+      }
     }
   },
-  created() {},
-  methods: {}
+  created() {
+    this.getList()
+  },
+  methods: {
+    /* 查找数据 */
+    searchList() {
+      this.queryParams.page = 1
+      this.getList()
+    },
+
+    /* 获取表格数据 */
+    getList() {
+      this.loading = true
+      getStorageClassList(this.queryParams).then((res) => {
+        this.tableData = res.data.items
+        this.total = res.data.total
+        this.loading = false
+      })
+    },
+
+    /* 监听page size变化 */
+    handlePageSizeChange(newSize) {
+      this.queryParams.limit = newSize
+      this.getList()
+    },
+
+    /* 监听page number的变化 */
+    handlePageChange(newPage) {
+      this.queryParams.page = newPage
+      this.getList()
+    },
+
+    /* page size的变化 */
+    handleCurrentChange(newPage) {
+      this.queryParams.limit = newPage
+      this.getList()
+    }
+  }
 }
 </script>
-
-<style lang="scss" scoped>
-.dashboard {
-  &-container {
-    margin: 30px;
-  }
-  &-text {
-    font-size: 30px;
-    line-height: 46px;
-  }
-}
-</style>
