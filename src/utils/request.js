@@ -13,12 +13,20 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   config => {
-    // 可以在此处添加发送请求前的一些操作
-
+    // 设置 JWT 认证 Token
     if (store.getters.token) {
-      // 指定后端认证请求头的参数名，根据实际情况修改
+      // 这里是后端指定的名称，根据实际情况修改
       config.headers['Authorization'] = `Bearer ${getToken()}`
     }
+
+    // 设置 Kubernetes 集群的 UUID
+    const params = new URLSearchParams(window.location.search)
+    const clusterName = params.get('cluster')
+    const kubernetesUUID = sessionStorage.getItem(clusterName)
+    if (kubernetesUUID) {
+      config.headers['X-Kubernetes-Cluster-Uuid'] = kubernetesUUID
+    }
+
     return config
   },
   error => {
