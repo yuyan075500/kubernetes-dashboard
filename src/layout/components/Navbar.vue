@@ -65,7 +65,7 @@ export default {
   computed: {
     ...mapGetters(['sidebar', 'avatar', 'name', 'namespaces']),
     isShow() {
-      const hiddenRoutes = ['/dashboard', '/dashboard/node', '/dashboard/namespace', '/storage/sc', '/storage/pv']
+      const hiddenRoutes = ['/dashboard', '/dashboard/infra/node', '/dashboard/infra/namespace', '/dashboard/storage/sc', '/dashboard/storage/pv']
       return !hiddenRoutes.includes(this.$route.path)
     },
     namespaceListComputed() {

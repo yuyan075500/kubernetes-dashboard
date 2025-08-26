@@ -44,10 +44,10 @@ export const constantRoutes = [
   },
 
   {
-    path: '/dashboard',
+    path: '/dashboard/infra',
     component: Layout,
-    redirect: '/dashboard/node',
-    name: 'Cluster',
+    redirect: '/dashboard/infra/node',
+    name: 'Infrastructure',
     meta: { title: '集群', icon: 'menu-cluster' },
     children: [
       {
@@ -66,9 +66,9 @@ export const constantRoutes = [
   },
 
   {
-    path: '/controller',
+    path: '/dashboard/controller',
     component: Layout,
-    redirect: '/controller/pod',
+    redirect: '/dashboard/controller/pod',
     name: 'Controller',
     meta: { title: '工作负载', icon: 'menu-controller' },
     children: [
@@ -112,9 +112,9 @@ export const constantRoutes = [
   },
 
   {
-    path: '/network',
+    path: '/dashboard/network',
     component: Layout,
-    redirect: '/network/service',
+    redirect: '/dashboard/network/service',
     name: 'Network',
     meta: { title: '服务发现', icon: 'menu-network' },
     children: [
@@ -140,9 +140,9 @@ export const constantRoutes = [
   },
 
   {
-    path: '/config',
+    path: '/dashboard/config',
     component: Layout,
-    redirect: '/config/configmap',
+    redirect: '/dashboard/config/configmap',
     name: 'Config',
     meta: { title: '配置', icon: 'menu-config' },
     children: [
@@ -162,9 +162,9 @@ export const constantRoutes = [
   },
 
   {
-    path: '/storage',
+    path: '/dashboard/storage',
     component: Layout,
-    redirect: '/storage/pv',
+    redirect: '/dashboard/storage/pv',
     name: 'Storage',
     meta: { title: '存储', icon: 'menu-storage' },
     children: [
