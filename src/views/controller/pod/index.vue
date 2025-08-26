@@ -61,7 +61,6 @@ export default {
       currentValue: undefined,
       tableData: [],
       queryParams: {
-        uuid: sessionStorage.getItem(this.$route.query.cluster),
         namespace: sessionStorage.getItem('namespace'),
         name: '',
         page: 1,

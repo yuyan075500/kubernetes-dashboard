@@ -77,7 +77,6 @@ export default {
       currentValue: undefined,
       tableData: [],
       queryParams: {
-        uuid: sessionStorage.getItem(this.$route.query.cluster),
         name: '',
         page: 1,
         limit: 10
