@@ -50,7 +50,7 @@
       direction="rtl"
       :visible.sync="yamlDrawer"
       :show-close="true"
-      size="1600"
+      size="1000"
       :wrapper-closable="false"
       :close-on-click-modal="false"
       @close="yamlDrawer = false"
@@ -58,21 +58,21 @@
       <!-- YAML 组件 -->
       <yaml-editor
         ref="form"
-        :yaml-content="currentValue"
+        :value="currentValue"
+        @close="yamlDrawer = false"
       />
     </el-drawer>
   </div>
 </template>
 
 <script>
+import yaml from 'js-yaml'
 import { getNodeList, getNodeYAML } from '@/api/cluster/node'
 import NodeTable from './table'
-import YamlEditor from './yaml'
 
 export default {
   components: {
-    NodeTable,
-    YamlEditor
+    NodeTable
   },
   data() {
     return {
@@ -127,6 +127,19 @@ export default {
       this.getList()
     },
 
+    /* YAML格式化 */
+    formatYAML(value) {
+      try {
+        // 把字符串转换为YAML对象
+        const obj = yaml.load(value)
+        // 再把YAML对象转换为格式化后的字符串
+        return yaml.dump(obj, { indent: 2, lineWidth: -1 })
+      } catch (e) {
+        console.error(e)
+        return value
+      }
+    },
+
     /* YAML */
     handleYAML(value) {
       // 打开Dialog
@@ -135,7 +148,7 @@ export default {
       this.formTitle = '编辑'
       // 获取YAML
       getNodeYAML(value).then((res) => {
-        this.currentValue = res.data
+        this.currentValue = this.formatYAML(res.data)
         // 打开Dialog
         this.yamlDrawer = true
       })
