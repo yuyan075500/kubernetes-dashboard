@@ -28,6 +28,7 @@
     <node-table
       v-loading="loading"
       :table-data="tableData"
+      @yaml="handleYAML"
     />
 
     <!-- 分页 -->
@@ -41,16 +42,37 @@
       @size-change="handlePageSizeChange"
       @current-change="handlePageChange"
     />
+
+    <!-- 编辑 -->
+    <el-drawer
+      v-if="yamlDrawer"
+      :title="formTitle"
+      direction="rtl"
+      :visible.sync="yamlDrawer"
+      :show-close="true"
+      size="1600"
+      :wrapper-closable="false"
+      :close-on-click-modal="false"
+      @close="yamlDrawer = false"
+    >
+      <!-- YAML 组件 -->
+      <yaml-editor
+        ref="form"
+        :yaml-content="currentValue"
+      />
+    </el-drawer>
   </div>
 </template>
 
 <script>
-import { getNodeList } from '@/api/cluster/node'
+import { getNodeList, getNodeYAML } from '@/api/cluster/node'
 import NodeTable from './table'
+import YamlEditor from './yaml'
 
 export default {
   components: {
-    NodeTable
+    NodeTable,
+    YamlEditor
   },
   data() {
     return {
@@ -61,7 +83,10 @@ export default {
         name: '',
         page: 1,
         limit: 10
-      }
+      },
+      formTitle: '',
+      yamlDrawer: null,
+      currentValue: null
     }
   },
   created() {
@@ -99,6 +124,30 @@ export default {
     /* page size的变化 */
     handleCurrentChange(newPage) {
       this.queryParams.limit = newPage
+      this.getList()
+    },
+
+    /* YAML */
+    handleYAML(value) {
+      // 打开Dialog
+      this.yamlDrawer = true
+      // 更改Dialog标题
+      this.formTitle = '编辑'
+      // 获取YAML
+      getNodeYAML(value).then((res) => {
+        this.currentValue = res.data
+        // 打开Dialog
+        this.yamlDrawer = true
+      })
+    },
+
+    /* Dialog 关闭 */
+    handleClose() {
+      // 关闭所有 Dialog
+      this.yamlDrawer = false
+      // 清空表单数据
+      this.currentValue = undefined
+      // 获取最新数据
       this.getList()
     }
   }

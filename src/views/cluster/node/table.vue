@@ -33,7 +33,7 @@
     <el-table-column label="内存用量" min-width="3%" />
     <el-table-column label="操作" min-width="5%" align="center">
       <template slot-scope="scope">
-        <el-button size="mini" type="text" @click="handleYAML(scope.row)">编辑 YAML</el-button>
+        <el-button size="mini" type="text" @click="handleYAML(scope.row)">YAML</el-button>
         <el-button size="mini" type="text" @click="handleEdit(scope.row)">编辑</el-button>
       </template>
     </el-table-column>
@@ -67,7 +67,7 @@ export default {
       this.$emit('edit', value)
     },
 
-    /* 编辑 YAML按钮 */
+    /* YAML按钮 */
     handleYAML(value) {
       this.$emit('yaml', value)
     }

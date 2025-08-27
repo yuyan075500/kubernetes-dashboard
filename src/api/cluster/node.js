@@ -8,3 +8,11 @@ export function getNodeList(params) {
     params
   })
 }
+
+// 获取节点YAML
+export function getNodeYAML(value) {
+  return request({
+    url: '/api/v1/kubernetes/node/' + value.metadata.name,
+    method: 'get'
+  })
+}
