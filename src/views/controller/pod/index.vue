@@ -14,7 +14,7 @@
     <!-- 表格头 -->
     <el-row :gutter="10">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd">新增</el-button>
+        <el-button type="primary" plain icon="el-icon-plus" size="mini">新增</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="primary" plain icon="el-icon-delete" size="mini">删除</el-button>
@@ -28,7 +28,7 @@
     <pod-table
       v-loading="loading"
       :table-data="tableData"
-      @edit="handleEdit"
+      @yaml="handleYAML"
     />
 
     <!-- 分页 -->
@@ -42,11 +42,29 @@
       @size-change="handlePageSizeChange"
       @current-change="handlePageChange"
     />
+
+    <el-dialog
+      v-if="yamlDialog"
+      :title="formTitle"
+      :visible.sync="yamlDialog"
+      :show-close="false"
+      width="1000px"
+      :close-on-click-modal="false"
+      @close="handleClose"
+    >
+      <!-- YAML 组件 -->
+      <yaml-editor
+        ref="form"
+        :value="currentValue"
+        @close="yamlDialog = false"
+      />
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getPodList } from '@/api/controller/pod'
+import { formatYAML } from '@/utils/yaml'
+import { getPodList, getPodYAML } from '@/api/controller/pod'
 import PodTable from './table'
 
 export default {
@@ -57,15 +75,16 @@ export default {
     return {
       loading: true,
       total: 0,
-      formTitle: undefined,
-      currentValue: undefined,
       tableData: [],
       queryParams: {
         namespace: sessionStorage.getItem('namespace'),
         name: '',
         page: 1,
         limit: 10
-      }
+      },
+      formTitle: '',
+      yamlDialog: false,
+      currentValue: undefined
     }
   },
   created() {
@@ -103,6 +122,28 @@ export default {
     /* page size的变化 */
     handleCurrentChange(newPage) {
       this.queryParams.limit = newPage
+      this.getList()
+    },
+
+    /* YAML */
+    handleYAML(value) {
+      // 打开Dialog
+      this.yamlDialog = true
+      // 更改Dialog标题
+      this.formTitle = '编辑'
+      // 获取YAML
+      getPodYAML(value).then((res) => {
+        this.currentValue = formatYAML(res.data)
+      })
+    },
+
+    /* Dialog 关闭 */
+    handleClose() {
+      // 关闭所有 Dialog
+      this.yamlDialog = false
+      // 清空表单数据
+      this.currentValue = undefined
+      // 获取最新数据
       this.getList()
     }
   }

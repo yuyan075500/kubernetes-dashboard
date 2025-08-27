@@ -34,7 +34,6 @@
     <el-table-column label="操作" min-width="5%" align="center">
       <template slot-scope="scope">
         <el-button size="mini" type="text" @click="handleYAML(scope.row)">YAML</el-button>
-        <el-button size="mini" type="text" @click="handleEdit(scope.row)">编辑</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -60,11 +59,6 @@ export default {
       return Object.keys(labels)
         .filter(key => key.startsWith('node-role.kubernetes.io/'))
         .map(key => key.replace('node-role.kubernetes.io/', '') || 'master')
-    },
-
-    /* 编辑按钮 */
-    handleEdit(value) {
-      this.$emit('edit', value)
     },
 
     /* YAML按钮 */

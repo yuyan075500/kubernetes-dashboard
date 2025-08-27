@@ -8,3 +8,11 @@ export function getPodList(params) {
     params
   })
 }
+
+// 获取Pod YAML
+export function getPodYAML(value) {
+  return request({
+    url: '/api/v1/kubernetes/pod/' + value.metadata.name + '?namespace=' + value.metadata.namespace,
+    method: 'get'
+  })
+}

@@ -2,6 +2,7 @@
   <div class="cm-wrapper">
     <codemirror
       ref="cm"
+      v-loading="loading"
       :value="value"
       :options="cmOptions"
       @changes="onCmCodeChanges"
@@ -49,7 +50,10 @@ export default {
   components: { codemirror },
   props: {
     value: { type: String, default: '' },
-    cmTheme: { type: String, default: 'neat' }
+    cmTheme: { type: String, default: 'neat' },
+    loading: {
+      type: Boolean
+    }
   },
   data() {
     return {
@@ -108,8 +112,7 @@ export default {
 
 <style lang="scss">
 .cm-wrapper {
-  width: 1000px;
-  height: 100%;
+  height: 450px;
 }
 
 .cm-wrapper .vue-codemirror {

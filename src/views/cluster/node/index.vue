@@ -43,30 +43,28 @@
       @current-change="handlePageChange"
     />
 
-    <!-- 编辑 -->
-    <el-drawer
-      v-if="yamlDrawer"
+    <el-dialog
+      v-if="yamlDialog"
       :title="formTitle"
-      direction="rtl"
-      :visible.sync="yamlDrawer"
-      :show-close="true"
-      size="1000"
-      :wrapper-closable="false"
+      :visible.sync="yamlDialog"
+      :show-close="false"
+      width="1000px"
       :close-on-click-modal="false"
-      @close="yamlDrawer = false"
+      @close="handleClose"
     >
       <!-- YAML 组件 -->
       <yaml-editor
         ref="form"
         :value="currentValue"
-        @close="yamlDrawer = false"
+        :loading="loading"
+        @close="yamlDialog = false"
       />
-    </el-drawer>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import yaml from 'js-yaml'
+import { formatYAML } from '@/utils/yaml'
 import { getNodeList, getNodeYAML } from '@/api/cluster/node'
 import NodeTable from './table'
 
@@ -85,8 +83,8 @@ export default {
         limit: 10
       },
       formTitle: '',
-      yamlDrawer: null,
-      currentValue: null
+      yamlDialog: false,
+      currentValue: undefined
     }
   },
   created() {
@@ -127,37 +125,24 @@ export default {
       this.getList()
     },
 
-    /* YAML格式化 */
-    formatYAML(value) {
-      try {
-        // 把字符串转换为YAML对象
-        const obj = yaml.load(value)
-        // 再把YAML对象转换为格式化后的字符串
-        return yaml.dump(obj, { indent: 2, lineWidth: -1 })
-      } catch (e) {
-        console.error(e)
-        return value
-      }
-    },
-
     /* YAML */
     handleYAML(value) {
       // 打开Dialog
-      this.yamlDrawer = true
+      this.yamlDialog = true
+      this.loading = true
       // 更改Dialog标题
       this.formTitle = '编辑'
       // 获取YAML
       getNodeYAML(value).then((res) => {
-        this.currentValue = this.formatYAML(res.data)
-        // 打开Dialog
-        this.yamlDrawer = true
+        this.currentValue = formatYAML(res.data)
+        this.loading = false
       })
     },
 
     /* Dialog 关闭 */
     handleClose() {
       // 关闭所有 Dialog
-      this.yamlDrawer = false
+      this.yamlDialog = false
       // 清空表单数据
       this.currentValue = undefined
       // 获取最新数据

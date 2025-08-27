@@ -24,7 +24,7 @@
     <el-table-column :formatter="dateFormat" prop="metadata.creationTimestamp" label="创建时间" min-width="5%" />
     <el-table-column label="操作" min-width="7%" align="center">
       <template slot-scope="scope">
-        <el-button size="mini" type="text" @click="handleYAML(scope.row)">编辑 YAML</el-button>
+        <el-button size="mini" type="text" @click="handleYAML(scope.row)">YAML</el-button>
         <el-button size="mini" type="text" @click="handleDelete(scope.row)">删除</el-button>
         <el-dropdown style="margin-left: 10px" trigger="click">
           <el-button size="mini" type="text">更多<i class="el-icon-arrow-down el-icon--right" /></el-button>
@@ -66,11 +66,6 @@ export default {
     /* 编辑 YAML按钮 */
     handleYAML(value) {
       this.$emit('yaml', value)
-    },
-
-    /* 删除按钮 */
-    handleDelete(value) {
-      this.$emit('delete', value)
     },
 
     /* 日期时间格式化 */

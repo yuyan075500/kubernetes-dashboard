@@ -22,7 +22,7 @@
     <namespace-table
       v-loading="loading"
       :table-data="tableData"
-      @edit="handleEdit"
+      @yaml="handleYAML"
     />
 
     <!-- 分页 -->
@@ -37,51 +37,48 @@
       @current-change="handlePageChange"
     />
 
-    <!-- 编辑 -->
     <el-dialog
-      v-if="namespaceAddDialog"
+      v-if="yamlDialog"
       :title="formTitle"
-      :visible.sync="namespaceAddDialog"
+      :visible.sync="yamlDialog"
       :show-close="false"
-      width="500px"
+      width="1000px"
       :close-on-click-modal="false"
       @close="handleClose"
     >
-      <!-- 表单组件 -->
-      <namespace-add-form
+      <!-- YAML 组件 -->
+      <yaml-editor
         ref="form"
-        :form="currentValue"
-        @close="handleClose"
-        @submit="handleSubmit"
+        :value="currentValue"
+        :loading="loading"
+        @close="yamlDialog = false"
       />
     </el-dialog>
   </div>
 </template>
 
 <script>
-// import { Message } from 'element-ui'
-import { getNamespaceList } from '@/api/cluster/namespace'
+import { formatYAML } from '@/utils/yaml'
+import { getNamespaceList, getNamespaceYAML } from '@/api/cluster/namespace'
 import NamespaceTable from './table'
-import NamespaceAddForm from './form'
 
 export default {
   components: {
-    NamespaceTable,
-    NamespaceAddForm
+    NamespaceTable
   },
   data() {
     return {
       loading: true,
       total: 0,
-      formTitle: undefined,
-      currentValue: undefined,
       tableData: [],
       queryParams: {
         name: '',
         page: 1,
         limit: 10
       },
-      namespaceAddDialog: false
+      formTitle: '',
+      yamlDialog: false,
+      currentValue: undefined
     }
   },
   created() {
@@ -122,89 +119,26 @@ export default {
       this.getList()
     },
 
-    /* 新增 */
-    handleAdd() {
+    /* YAML */
+    handleYAML(value) {
       // 打开Dialog
-      this.namespaceAddDialog = true
+      this.yamlDialog = true
+      this.loading = true
       // 更改Dialog标题
-      this.formTitle = '新增'
+      this.formTitle = '编辑'
+      // 获取YAML
+      getNamespaceYAML(value).then((res) => {
+        this.currentValue = formatYAML(res.data)
+        this.loading = false
+      })
     },
 
-    /* 修改 */
-    handleEdit(rowData) {
-      // 显示弹框
-      this.namespaceAddDialog = true
-      // 更改弹框标题
-      this.formTitle = '修改'
-      // 将行数据赋值给表单
-      this.currentValue = JSON.parse(JSON.stringify(rowData))
-    },
-
-    // /* 删除集群 */
-    // handleDelete(rowData) {
-    //   this.$confirm('点击确认当前集群将从系统中永久移除。', '提示', {
-    //     confirmButtonText: '确定',
-    //     cancelButtonText: '取消',
-    //     type: 'warning',
-    //     showClose: false,
-    //     closeOnClickModal: false
-    //   }).then(() => {
-    //     deleteCluster(rowData).then((res) => {
-    //       if (res.code === 0) {
-    //         Message({
-    //           message: res.msg,
-    //           type: 'success',
-    //           duration: 1000
-    //         })
-    //         if (this.tableData.length === 1 && this.queryParams.page !== 1) {
-    //           this.queryParams.page--
-    //         }
-    //         this.getList()
-    //       }
-    //     })
-    //   }).catch(() => {})
-    // },
-
-    // /* 新增修改 */
-    // handleSubmit(formData) {
-    //   if (formData.id) {
-    //     changeCluster(formData).then((res) => {
-    //       if (res.code === 0) {
-    //         Message({
-    //           message: res.msg,
-    //           type: 'success',
-    //           duration: 1000
-    //         })
-    //         this.loading = false
-    //         this.handleClose()
-    //       }
-    //     }, () => {
-    //       this.loading = false
-    //     })
-    //   } else {
-    //     addCluster(formData).then((res) => {
-    //       if (res.code === 0) {
-    //         Message({
-    //           message: res.msg,
-    //           type: 'success',
-    //           duration: 1000
-    //         })
-    //         this.loading = false
-    //         this.handleClose()
-    //       }
-    //     }, () => {
-    //       this.loading = false
-    //     })
-    //   }
-    // },
     /* 表单关闭 */
     handleClose() {
       // 关闭所有Dialog
       this.namespaceAddDialog = false
       // 清空表单数据
       this.currentValue = undefined
-      // 清空校验规则
-      this.$refs.form.$refs.form.resetFields()
       // 获取最新数据
       this.getList()
     }

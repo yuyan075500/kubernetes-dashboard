@@ -17,3 +17,11 @@ export function getNamespaceListAll(params) {
     params
   })
 }
+
+// 获取名称空间YAML
+export function getNamespaceYAML(value) {
+  return request({
+    url: '/api/v1/kubernetes/namespace/' + value.metadata.name,
+    method: 'get'
+  })
+}

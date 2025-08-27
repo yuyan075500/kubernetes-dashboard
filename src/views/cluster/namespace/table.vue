@@ -26,9 +26,7 @@
     <el-table-column label="备注" min-width="4%" />
     <el-table-column label="操作" min-width="6%" align="center">
       <template slot-scope="scope">
-        <el-button size="mini" type="text" @click="handleYAML(scope.row)">编辑 YAML</el-button>
-        <el-button size="mini" type="text" @click="handleEdit(scope.row)">编辑</el-button>
-        <el-button size="mini" type="text" @click="handleDelete(scope.row)">删除</el-button>
+        <el-button size="mini" type="text" @click="handleYAML(scope.row)">YAML</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -48,19 +46,9 @@ export default {
     }
   },
   methods: {
-    /* 编辑按钮 */
-    handleEdit(value) {
-      this.$emit('edit', value)
-    },
-
     /* 编辑 YAML按钮 */
     handleYAML(value) {
       this.$emit('yaml', value)
-    },
-
-    /* 删除按钮 */
-    handleDelete(value) {
-      this.$emit('delete', value)
     },
 
     /* 日期时间格式化 */
