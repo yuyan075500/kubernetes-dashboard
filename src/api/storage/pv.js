@@ -8,3 +8,11 @@ export function getPersistentVolumeList(params) {
     params
   })
 }
+
+// 获取PersistentVolume YAML
+export function getPersistentVolumeYAML(value) {
+  return request({
+    url: '/api/v1/kubernetes/persistentVolume/' + value.metadata.name,
+    method: 'get'
+  })
+}

@@ -11,8 +11,7 @@
     <el-table-column :formatter="dateFormat" prop="metadata.creationTimestamp" label="创建时间" min-width="5%" />
     <el-table-column label="操作" min-width="5%" align="center">
       <template slot-scope="scope">
-        <el-button size="mini" type="text" @click="handleYAML(scope.row)">编辑 YAML</el-button>
-        <el-button size="mini" type="text">删除</el-button>
+        <el-button size="mini" type="text" @click="handleYAML(scope.row)">YAML</el-button>
       </template>
     </el-table-column>
   </el-table>

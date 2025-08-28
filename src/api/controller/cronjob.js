@@ -8,3 +8,12 @@ export function getCronJobList(params) {
     params
   })
 }
+
+// 获取CronJob YAML
+export function getCronJobYAML(value) {
+  return request({
+    url: '/api/v1/kubernetes/cronJob/' + value.metadata.name + '?namespace=' + value.metadata.namespace,
+    method: 'get'
+  })
+}
+

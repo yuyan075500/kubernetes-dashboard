@@ -8,3 +8,11 @@ export function getIngressList(params) {
     params
   })
 }
+
+// 获取Ingress YAML
+export function getIngressYAML(value) {
+  return request({
+    url: '/api/v1/kubernetes/ingress/' + value.metadata.name + '?namespace=' + value.metadata.namespace,
+    method: 'get'
+  })
+}

@@ -8,3 +8,11 @@ export function getSecretList(params) {
     params
   })
 }
+
+// 获取Secret YAML
+export function getSecretYAML(value) {
+  return request({
+    url: '/api/v1/kubernetes/secret/' + value.metadata.name + '?namespace=' + value.metadata.namespace,
+    method: 'get'
+  })
+}

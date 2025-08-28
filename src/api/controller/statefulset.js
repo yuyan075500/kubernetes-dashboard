@@ -8,3 +8,11 @@ export function getStatefulSetList(params) {
     params
   })
 }
+
+// 获取StatefulSet YAML
+export function getStatefulSetYAML(value) {
+  return request({
+    url: '/api/v1/kubernetes/statefulSet/' + value.metadata.name + '?namespace=' + value.metadata.namespace,
+    method: 'get'
+  })
+}

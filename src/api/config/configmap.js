@@ -8,3 +8,11 @@ export function getConfigMapList(params) {
     params
   })
 }
+
+// 获取ConfigMap YAML
+export function getConfigMapYAML(value) {
+  return request({
+    url: '/api/v1/kubernetes/configMap/' + value.metadata.name + '?namespace=' + value.metadata.namespace,
+    method: 'get'
+  })
+}

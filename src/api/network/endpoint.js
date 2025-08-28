@@ -8,3 +8,11 @@ export function getEndpointList(params) {
     params
   })
 }
+
+// 获取Endpoint YAML
+export function getEndpointYAML(value) {
+  return request({
+    url: '/api/v1/kubernetes/endpoint/' + value.metadata.name + '?namespace=' + value.metadata.namespace,
+    method: 'get'
+  })
+}

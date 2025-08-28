@@ -22,6 +22,7 @@
     <job-table
       v-loading="loading"
       :table-data="tableData"
+      @yaml="handleYAML"
     />
 
     <!-- 分页 -->
@@ -35,11 +36,29 @@
       @size-change="handlePageSizeChange"
       @current-change="handlePageChange"
     />
+
+    <el-dialog
+      v-if="yamlDialog"
+      :title="formTitle"
+      :visible.sync="yamlDialog"
+      :show-close="false"
+      width="1000px"
+      :close-on-click-modal="false"
+      @close="handleClose"
+    >
+      <!-- YAML 组件 -->
+      <yaml-editor
+        ref="form"
+        :value="currentValue"
+        @close="yamlDialog = false"
+      />
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getJobList } from '@/api/controller/job'
+import { formatYAML } from '@/utils/yaml'
+import { getJobList, getJobYAML } from '@/api/controller/job'
 import JobTable from './table'
 
 export default {
@@ -56,7 +75,10 @@ export default {
         name: '',
         page: 1,
         limit: 10
-      }
+      },
+      formTitle: '',
+      yamlDialog: false,
+      currentValue: undefined
     }
   },
   created() {
@@ -94,6 +116,28 @@ export default {
     /* page size的变化 */
     handleCurrentChange(newPage) {
       this.queryParams.limit = newPage
+      this.getList()
+    },
+
+    /* YAML */
+    handleYAML(value) {
+      // 打开Dialog
+      this.yamlDialog = true
+      // 更改Dialog标题
+      this.formTitle = '编辑'
+      // 获取YAML
+      getJobYAML(value).then((res) => {
+        this.currentValue = formatYAML(res.data)
+      })
+    },
+
+    /* Dialog 关闭 */
+    handleClose() {
+      // 关闭所有 Dialog
+      this.yamlDialog = false
+      // 清空表单数据
+      this.currentValue = undefined
+      // 获取最新数据
       this.getList()
     }
   }

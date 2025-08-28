@@ -8,3 +8,11 @@ export function getDaemonSetList(params) {
     params
   })
 }
+
+// 获取DaemonSet YAML
+export function getDaemonSetYAML(value) {
+  return request({
+    url: '/api/v1/kubernetes/daemonSet/' + value.metadata.name + '?namespace=' + value.metadata.namespace,
+    method: 'get'
+  })
+}

@@ -8,3 +8,11 @@ export function getDeploymentList(params) {
     params
   })
 }
+
+// 获取Deployment YAML
+export function getDeploymentYAML(value) {
+  return request({
+    url: '/api/v1/kubernetes/deployment/' + value.metadata.name + '?namespace=' + value.metadata.namespace,
+    method: 'get'
+  })
+}
