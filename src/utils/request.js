@@ -22,7 +22,7 @@ service.interceptors.request.use(
     // 设置 Kubernetes 集群的 UUID
     const params = new URLSearchParams(window.location.search)
     const clusterName = params.get('cluster')
-    const kubernetesUUID = sessionStorage.getItem(clusterName)
+    const kubernetesUUID = localStorage.getItem(clusterName)
     if (kubernetesUUID) {
       config.headers['X-Kubernetes-Cluster-Uuid'] = kubernetesUUID
     }

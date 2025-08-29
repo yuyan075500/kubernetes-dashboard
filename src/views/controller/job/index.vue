@@ -71,7 +71,7 @@ export default {
       total: 0,
       tableData: [],
       queryParams: {
-        namespace: sessionStorage.getItem('namespace'),
+        namespace: localStorage.getItem('namespace'),
         name: '',
         page: 1,
         limit: 10

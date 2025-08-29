@@ -29,6 +29,7 @@
       v-loading="loading"
       :table-data="tableData"
       @yaml="handleYAML"
+      @terminal="handleTerminal"
     />
 
     <!-- 分页 -->
@@ -77,7 +78,7 @@ export default {
       total: 0,
       tableData: [],
       queryParams: {
-        namespace: sessionStorage.getItem('namespace'),
+        namespace: localStorage.getItem('namespace'),
         name: '',
         page: 1,
         limit: 10
@@ -135,6 +136,20 @@ export default {
       getPodYAML(value).then((res) => {
         this.currentValue = formatYAML(res.data)
       })
+    },
+
+    /* 终端 */
+    handleTerminal(value) {
+      const routeData = this.$router.resolve({
+        path: '/terminal',
+        query: {
+          ...this.$route.query,
+          PodName: value.metadata.name,
+          ContainerName: value.spec.containers[0].name,
+          Namespace: value.metadata.namespace
+        }
+      })
+      window.open(routeData.href, '_blank')
     },
 
     /* Dialog 关闭 */

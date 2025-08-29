@@ -187,6 +187,12 @@ export const constantRoutes = [
         meta: { title: 'Storage Classes', icon: 'sub-menu-sc' }
       }
     ]
+  },
+
+  {
+    path: '/terminal',
+    hidden: true,
+    component: () => import('@/views/terminal/index')
   }
 ]
 

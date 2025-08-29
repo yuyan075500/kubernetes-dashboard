@@ -10,7 +10,7 @@ export default {
   data() {
     return {
       // 集群 UUID
-      uuid: sessionStorage.getItem(this.$route.query.cluster)
+      uuid: localStorage.getItem(this.$route.query.cluster)
     }
   },
   created() {},

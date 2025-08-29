@@ -59,13 +59,13 @@ export default {
   },
   data() {
     return {
-      selectedNamespace: sessionStorage.getItem('namespace') || ''
+      selectedNamespace: localStorage.getItem('namespace') || ''
     }
   },
   computed: {
     ...mapGetters(['sidebar', 'avatar', 'name', 'namespaces']),
     isShow() {
-      const hiddenRoutes = ['/dashboard', '/dashboard/infra/node', '/dashboard/infra/namespace', '/dashboard/storage/sc', '/dashboard/storage/pv']
+      const hiddenRoutes = ['/terminal', '/dashboard', '/dashboard/infra/node', '/dashboard/infra/namespace', '/dashboard/storage/sc', '/dashboard/storage/pv']
       return !hiddenRoutes.includes(this.$route.path)
     },
     namespaceListComputed() {
@@ -79,7 +79,7 @@ export default {
   },
   watch: {
     selectedNamespace(val) {
-      sessionStorage.setItem('namespace', val)
+      localStorage.setItem('namespace', val)
       location.reload()
     }
   },

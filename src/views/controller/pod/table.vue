@@ -30,7 +30,7 @@
           <el-button size="mini" type="text">更多<i class="el-icon-arrow-down el-icon--right" /></el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>
-              <el-button class="el-button-text" size="mini" type="text">终端</el-button>
+              <el-button class="el-button-text" size="mini" type="text" @click="handleTerminal(scope.row)">终端</el-button>
             </el-dropdown-item>
             <el-dropdown-item>
               <el-button class="el-button-text" size="mini" type="text">日志</el-button>
@@ -66,6 +66,11 @@ export default {
     /* 编辑 YAML按钮 */
     handleYAML(value) {
       this.$emit('yaml', value)
+    },
+
+    /* 终端 */
+    handleTerminal(value) {
+      this.$emit('terminal', value)
     },
 
     /* 日期时间格式化 */
