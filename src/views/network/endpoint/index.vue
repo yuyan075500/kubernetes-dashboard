@@ -71,7 +71,7 @@ export default {
       total: 0,
       tableData: [],
       queryParams: {
-        namespace: localStorage.getItem('namespace'),
+        namespace: localStorage.getItem(this.$route.query.cluster + '_namespace'),
         name: '',
         page: 1,
         limit: 10

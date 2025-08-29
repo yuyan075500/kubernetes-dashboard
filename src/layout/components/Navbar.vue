@@ -59,7 +59,7 @@ export default {
   },
   data() {
     return {
-      selectedNamespace: localStorage.getItem('namespace') || ''
+      selectedNamespace: localStorage.getItem(this.$route.query.cluster + '_namespace') || ''
     }
   },
   computed: {
@@ -79,7 +79,7 @@ export default {
   },
   watch: {
     selectedNamespace(val) {
-      localStorage.setItem('namespace', val)
+      localStorage.setItem(this.$route.query.cluster + '_namespace', val)
       location.reload()
     }
   },

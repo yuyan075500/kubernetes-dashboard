@@ -7,13 +7,13 @@ export default function getPageTitle(pageTitle) {
   const urlParams = new URLSearchParams(window.location.search)
   const cluster = urlParams.get('cluster')
 
-  // 如果有 cluster 参数，优先使用它作为标题
-  if (cluster) {
+  const { pathname } = window.location
+  if (pathname === '/kubernetes/cluster/terminal') {
+    const PodName = urlParams.get('PodName')
+    return `终端-${PodName} - ${title}`
+  } else if (cluster) {
     return `${cluster} - ${title}`
-  }
-
-  // 如果没有 cluster，使用 pageTitle
-  if (pageTitle) {
+  } else if (pageTitle) {
     return `${pageTitle} - ${title}`
   }
 
