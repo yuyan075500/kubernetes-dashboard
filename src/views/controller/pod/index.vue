@@ -140,11 +140,16 @@ export default {
 
     /* 终端 */
     handleTerminal(value) {
+      const containers = value.spec.containers.map(container => ({
+        name: container.name
+      }))
+      console.log(containers)
       const routeData = this.$router.resolve({
         path: '/terminal',
         query: {
           ...this.$route.query,
           PodName: value.metadata.name,
+          Containers: JSON.stringify(containers),
           ContainerName: value.spec.containers[0].name,
           Namespace: value.metadata.namespace
         }

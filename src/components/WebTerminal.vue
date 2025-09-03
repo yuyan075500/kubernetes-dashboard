@@ -10,6 +10,16 @@ import 'xterm/css/xterm.css'
 
 export default {
   name: 'WebTerminal',
+  props: {
+    shell: {
+      type: String,
+      default: 'sh'
+    },
+    container: {
+      type: String,
+      default: null
+    }
+  },
   data() {
     return {
       ws: null,
@@ -24,13 +34,21 @@ export default {
       }
     }
   },
+  computed: {
+    // 计算最终要使用的容器名称
+    targetContainer() {
+      return this.container !== null ? this.container : this.$route.query.ContainerName
+    }
+  },
   mounted() {
     // 发起 WS 请求
-    const { cluster, PodName, Namespace, ContainerName } = this.$route.query
+    const { cluster, PodName, Namespace } = this.$route.query
     const kubernetesUUID = localStorage.getItem(cluster)
-    this.ws = new WebSocket(
-      `wss://d-ops.50yc.cn/api/v1/kubernetes/pod/terminal?uuid=${kubernetesUUID}&podName=${PodName}&namespace=${Namespace}&containerName=${ContainerName}`
-    )
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
+    const host = window.location.hostname
+    const port = window.location.port
+    const wsUrl = `${protocol}://${host}${port ? `:${port}` : ''}/api/v1/kubernetes/pod/terminal?uuid=${kubernetesUUID}&podName=${PodName}&namespace=${Namespace}&containerName=${this.targetContainer}&shell=${this.shell}`
+    this.ws = new WebSocket(wsUrl)
 
     this.ws.onopen = () => {
       console.log(Date(), 'onopen')
@@ -59,7 +77,8 @@ export default {
     // 初始化 terminal
     const webTerminal = document.getElementById('terminal')
     this.terminal = new Terminal({
-      fontSize: this.fontSize
+      fontSize: this.fontSize,
+      cursorBlink: true
     })
     this.fitAddon = new FitAddon()
     this.terminal.loadAddon(this.fitAddon)
@@ -67,6 +86,13 @@ export default {
 
     try {
       this.fitAddon.fit()
+      if (this.ws && this.ws.readyState === 1) {
+        this.ws.send(`resize:${this.terminal.rows}:${this.terminal.cols}`)
+      } else {
+        this.ws.onopen = () => {
+          this.ws.send(`resize:${this.terminal.rows}:${this.terminal.cols}`)
+        }
+      }
     } catch (e) {
       console.error(e)
     }
@@ -113,6 +139,6 @@ export default {
 <style>
 #terminal {
   position: absolute;
-  top: 0; right: 0; bottom: 0; left: 0;
+  top: 40px; right: 0; bottom: 0; left: 0;
 }
 </style>
