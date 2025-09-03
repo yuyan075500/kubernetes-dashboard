@@ -30,6 +30,7 @@
       :table-data="tableData"
       @yaml="handleYAML"
       @terminal="handleTerminal"
+      @log="handleLog"
     />
 
     <!-- 分页 -->
@@ -146,6 +147,25 @@ export default {
       console.log(containers)
       const routeData = this.$router.resolve({
         path: '/terminal',
+        query: {
+          ...this.$route.query,
+          PodName: value.metadata.name,
+          Containers: JSON.stringify(containers),
+          ContainerName: value.spec.containers[0].name,
+          Namespace: value.metadata.namespace
+        }
+      })
+      window.open(routeData.href, '_blank')
+    },
+
+    /* 日志 */
+    handleLog(value) {
+      const containers = value.spec.containers.map(container => ({
+        name: container.name
+      }))
+      console.log(containers)
+      const routeData = this.$router.resolve({
+        path: '/log',
         query: {
           ...this.$route.query,
           PodName: value.metadata.name,

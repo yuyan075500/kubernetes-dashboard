@@ -193,6 +193,12 @@ export const constantRoutes = [
     path: '/terminal',
     hidden: true,
     component: () => import('@/views/terminal/index')
+  },
+
+  {
+    path: '/log',
+    hidden: true,
+    component: () => import('@/views/log/index')
   }
 ]
 

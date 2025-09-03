@@ -33,7 +33,7 @@
               <el-button class="el-button-text" size="mini" type="text" @click="handleTerminal(scope.row)">终端</el-button>
             </el-dropdown-item>
             <el-dropdown-item>
-              <el-button class="el-button-text" size="mini" type="text">日志</el-button>
+              <el-button class="el-button-text" size="mini" type="text" @click="handleLog(scope.row)">日志</el-button>
             </el-dropdown-item>
             <el-dropdown-item>
               <el-button class="el-button-text" size="mini" type="text">强制删除</el-button>
@@ -71,6 +71,11 @@ export default {
     /* 终端 */
     handleTerminal(value) {
       this.$emit('terminal', value)
+    },
+
+    /* 日志 */
+    handleLog(value) {
+      this.$emit('log', value)
     },
 
     /* 日期时间格式化 */
