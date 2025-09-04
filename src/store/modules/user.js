@@ -48,9 +48,9 @@ const actions = {
   },
 
   // 获取名称空间
-  getNamespace({ commit }, cluster) {
+  getNamespace({ commit }) {
     return new Promise((resolve, reject) => {
-      getNamespaceListAll({ 'uuid': cluster }).then(response => {
+      getNamespaceListAll().then(response => {
         const result = response.data.items.map(item => {
           return { 'name': item.metadata.name, 'value': item.metadata.uid }
         })

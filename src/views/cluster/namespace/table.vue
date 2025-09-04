@@ -16,7 +16,7 @@
         </div>
       </template>
     </el-table-column>
-    <el-table-column prop="status.phase" label="状态" min-width="2%">
+    <el-table-column prop="status.phase" label="状态" min-width="3%">
       <template slot-scope="scope">
         <el-tag v-if="scope.row.status.phase === 'Active'" type="success" size="mini">{{ scope.row.status.phase }}</el-tag>
         <el-tag v-else type="danger" size="mini">{{ scope.row.status.phase }}</el-tag>
@@ -27,6 +27,7 @@
     <el-table-column label="操作" min-width="6%" align="center">
       <template slot-scope="scope">
         <el-button size="mini" type="text" @click="handleYAML(scope.row)">YAML</el-button>
+        <el-button size="mini" type="text" @click="handleDelete(scope.row)">删除</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -49,6 +50,11 @@ export default {
     /* 编辑 YAML按钮 */
     handleYAML(value) {
       this.$emit('yaml', value)
+    },
+
+    /* 删除按钮 */
+    handleDelete(value) {
+      this.$emit('delete', value)
     },
 
     /* 日期时间格式化 */

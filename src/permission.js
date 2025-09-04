@@ -30,7 +30,7 @@ router.beforeEach(async(to, from, next) => {
         await store.dispatch('user/getInfo')
 
         // 获取名称空间
-        await store.dispatch('user/getNamespace', localStorage.getItem(to.query.cluster))
+        await store.dispatch('user/getNamespace')
 
         next()
       } catch (error) {

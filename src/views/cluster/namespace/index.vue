@@ -23,6 +23,7 @@
       v-loading="loading"
       :table-data="tableData"
       @yaml="handleYAML"
+      @delete="handleDelete"
     />
 
     <!-- 分页 -->
@@ -54,17 +55,39 @@
         @close="yamlDialog = false"
       />
     </el-dialog>
+
+    <!-- 新增 -->
+    <el-dialog
+      v-if="namespaceAddDialog"
+      :title="formTitle"
+      :visible.sync="namespaceAddDialog"
+      :show-close="false"
+      width="500px"
+      :close-on-click-modal="false"
+      @closed="handleClose"
+    >
+      <namespace-add-form
+        ref="form"
+        :form="currentValue"
+        :loading="loading"
+        @close="handleClose"
+        @submit="handleSubmit"
+      />
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import { Message } from 'element-ui'
 import { formatYAML } from '@/utils/yaml'
-import { getNamespaceList, getNamespaceYAML } from '@/api/cluster/namespace'
+import { addNamespace, deleteNamespace, getNamespaceList, getNamespaceYAML } from '@/api/cluster/namespace'
 import NamespaceTable from './table'
+import NamespaceAddForm from './form'
 
 export default {
   components: {
-    NamespaceTable
+    NamespaceTable,
+    NamespaceAddForm
   },
   data() {
     return {
@@ -78,6 +101,7 @@ export default {
       },
       formTitle: '',
       yamlDialog: false,
+      namespaceAddDialog: false,
       currentValue: undefined
     }
   },
@@ -133,10 +157,74 @@ export default {
       })
     },
 
+    handleAdd() {
+      // 打开Dialog
+      this.namespaceAddDialog = true
+      // 更改Dialog标题
+      this.formTitle = '新增名称空间'
+    },
+
+    /* 表单提交 */
+    handleSubmit(formData) {
+      this.loading = true
+      addNamespace(formData).then((res) => {
+        if (res.code === 0) {
+          Message({
+            message: res.msg,
+            type: 'success',
+            duration: 1000
+          })
+          this.loading = false
+          this.handleClose()
+        }
+      }, () => {
+        this.loading = false
+      })
+    },
+
+    /* 删除分组 */
+    handleDelete(rowData) {
+      this.$confirm('点击确认将永久删除当前名称空间。', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        showClose: false,
+        closeOnClickModal: false,
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = '删除中...'
+            deleteNamespace(rowData).then((res) => {
+              if (res.code === 0) {
+                Message({
+                  message: res.msg,
+                  type: 'success',
+                  duration: 1000
+                })
+                instance.confirmButtonLoading = false
+                done()
+                this.getList()
+              }
+            }).finally(() => {
+              instance.confirmButtonLoading = false
+              instance.confirmButtonText = '确定'
+            })
+          } else {
+            done()
+          }
+        }
+      }).then(() => {}).catch(() => {})
+    },
+
     /* 表单关闭 */
     handleClose() {
       // 关闭所有Dialog
+      this.yamlDialog = false
       this.namespaceAddDialog = false
+      // 关闭loading状态
+      this.loading = false
+      // 清空校验规则
+      this.$refs.form.$refs.form.resetFields()
       // 清空表单数据
       this.currentValue = undefined
       // 获取最新数据
