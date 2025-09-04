@@ -1,17 +1,19 @@
 <template>
-  <div class="cm-wrapper">
-    <codemirror
-      ref="cm"
-      v-loading="loading"
-      :value="value"
-      :options="cmOptions"
-      @changes="onCmCodeChanges"
-    />
-    <div class="drawer-footer">
-      <el-button size="mini" @click="cancel">取 消</el-button>
-      <el-button type="primary" size="mini">提 交</el-button>
+  <el-form ref="form">
+    <div class="cm-wrapper">
+      <codemirror
+        ref="cm"
+        v-loading="loading"
+        :value="value"
+        :options="cmOptions"
+        @changes="onCmCodeChanges"
+      />
+      <div class="drawer-footer">
+        <el-button size="mini" @click="cancel">取 消</el-button>
+        <el-button type="primary" size="mini" :loading="loading" @click="handleSubmit">提 交</el-button>
+      </div>
     </div>
-  </div>
+  </el-form>
 </template>
 
 <script>
@@ -86,9 +88,14 @@ export default {
   },
   methods: {
 
-    /* 关闭表单 */
+    /* 关闭按钮 */
     cancel() {
       this.$emit('close')
+    },
+
+    /* 提交按钮 */
+    handleSubmit() {
+      this.$emit('submit', this.editorValue)
     },
 
     /* 折叠字段 */

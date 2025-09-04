@@ -53,6 +53,7 @@
         :value="currentValue"
         :loading="loading"
         @close="yamlDialog = false"
+        @submit="handleYAMLSubmit"
       />
     </el-dialog>
 
@@ -80,7 +81,7 @@
 <script>
 import { Message } from 'element-ui'
 import { formatYAML } from '@/utils/yaml'
-import { addNamespace, deleteNamespace, getNamespaceList, getNamespaceYAML } from '@/api/cluster/namespace'
+import { addNamespace, deleteNamespace, updateNamespace, getNamespaceList, getNamespaceYAML } from '@/api/cluster/namespace'
 import NamespaceTable from './table'
 import NamespaceAddForm from './form'
 
@@ -149,7 +150,7 @@ export default {
       this.yamlDialog = true
       this.loading = true
       // 更改Dialog标题
-      this.formTitle = '编辑'
+      this.formTitle = '修改'
       // 获取YAML
       getNamespaceYAML(value).then((res) => {
         this.currentValue = formatYAML(res.data)
@@ -161,13 +162,31 @@ export default {
       // 打开Dialog
       this.namespaceAddDialog = true
       // 更改Dialog标题
-      this.formTitle = '新增名称空间'
+      this.formTitle = '新增'
     },
 
     /* 表单提交 */
-    handleSubmit(formData) {
+    handleSubmit(value) {
       this.loading = true
-      addNamespace(formData).then((res) => {
+      addNamespace(value).then((res) => {
+        if (res.code === 0) {
+          Message({
+            message: res.msg,
+            type: 'success',
+            duration: 1000
+          })
+          this.loading = false
+          this.handleClose()
+        }
+      }, () => {
+        this.loading = false
+      })
+    },
+
+    /* 表单提交 */
+    handleYAMLSubmit(value) {
+      this.loading = true
+      updateNamespace(value).then((res) => {
         if (res.code === 0) {
           Message({
             message: res.msg,

@@ -17,6 +17,16 @@ export function deleteNamespace(data) {
   })
 }
 
+// 修改名称空间
+export function updateNamespace(data) {
+  return request({
+    url: '/api/v1/kubernetes/namespace',
+    method: 'put',
+    headers: { 'Content-Type': 'text/yaml' },
+    data
+  })
+}
+
 // 获取名称空间列表
 export function getNamespaceList(params) {
   return request({

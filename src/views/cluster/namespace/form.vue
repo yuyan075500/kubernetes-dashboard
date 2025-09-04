@@ -3,6 +3,9 @@
     <el-form-item label="名称：" prop="name">
       <el-input v-model="form.name" autocomplete="off" clearable />
     </el-form-item>
+    <el-form-item label="描述：">
+      <el-input v-model="form.description" autocomplete="off" clearable />
+    </el-form-item>
     <el-form-item>
       <div>
         <el-button size="mini" @click="cancel">取 消</el-button>
@@ -20,7 +23,8 @@ export default {
       type: Object,
       default() {
         return {
-          name: ''
+          name: '',
+          description: ''
         }
       }
     },

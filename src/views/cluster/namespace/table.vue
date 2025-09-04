@@ -23,7 +23,7 @@
       </template>
     </el-table-column>
     <el-table-column :formatter="dateFormat" prop="metadata.creationTimestamp" label="创建时间" min-width="4%" />
-    <el-table-column label="备注" min-width="4%" />
+    <el-table-column show-overflow-tooltip prop="metadata.annotations.description" label="备注" min-width="4%" />
     <el-table-column label="操作" min-width="6%" align="center">
       <template slot-scope="scope">
         <el-button size="mini" type="text" @click="handleYAML(scope.row)">YAML</el-button>
