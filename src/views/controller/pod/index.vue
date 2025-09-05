@@ -37,7 +37,7 @@
     <el-pagination
       background
       :current-page="queryParams.page"
-      :page-sizes="[15, 20, 50, 100, 500]"
+      :page-sizes="[10, 15, 20, 50, 100, 500]"
       :page-size="queryParams.limit"
       :total="total"
       layout="total, sizes, prev, pager, next, jumper"

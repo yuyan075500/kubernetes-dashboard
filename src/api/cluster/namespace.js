@@ -22,7 +22,6 @@ export function updateNamespace(data) {
   return request({
     url: '/api/v1/kubernetes/namespace',
     method: 'put',
-    headers: { 'Content-Type': 'text/yaml' },
     data
   })
 }
