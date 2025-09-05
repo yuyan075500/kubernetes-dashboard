@@ -1,6 +1,15 @@
 import request from '@/utils/request'
 
-// 获取Pod列表
+// 删除 Pod
+export function deletePods(data) {
+  return request({
+    url: '/api/v1/kubernetes/pod/batchDelete',
+    method: 'delete',
+    data
+  })
+}
+
+// 获取 Pod 列表
 export function getPodList(params) {
   return request({
     url: '/api/v1/kubernetes/pods',
@@ -9,7 +18,7 @@ export function getPodList(params) {
   })
 }
 
-// 获取Pod YAML
+// 获取 Pod YAML
 export function getPodYAML(value) {
   return request({
     url: '/api/v1/kubernetes/pod/' + value.metadata.name + '?namespace=' + value.metadata.namespace,

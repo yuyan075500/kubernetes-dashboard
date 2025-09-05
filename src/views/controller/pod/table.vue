@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="tableData" tooltip-effect="dark" style="width: 100%; margin-top:10px;" size="mini" border>
+  <el-table :data="tableData" tooltip-effect="dark" style="width: 100%; margin-top:10px;" size="mini" border @selection-change="handleSelectionChange">
     <el-table-column type="selection" width="40" />
     <el-table-column show-overflow-tooltip prop="metadata.name" label="名称" min-width="7%" />
     <el-table-column show-overflow-tooltip prop="metadata.namespace" label="名称空间" min-width="4%" />
@@ -36,7 +36,7 @@
               <el-button class="el-button-text" size="mini" type="text" @click="handleLog(scope.row)">日志</el-button>
             </el-dropdown-item>
             <el-dropdown-item>
-              <el-button class="el-button-text" size="mini" type="text">强制删除</el-button>
+              <el-button class="el-button-text" size="mini" type="text" @click="handleDeleteForce(scope.row)">强制删除</el-button>
             </el-dropdown-item>
             <el-dropdown-item>
               <el-button class="el-button-text" size="mini" type="text">文件管理</el-button>
@@ -68,6 +68,16 @@ export default {
       this.$emit('yaml', value)
     },
 
+    /* 删除按钮 */
+    handleDelete(value) {
+      this.$emit('delete', value)
+    },
+
+    /* 强制删除按钮 */
+    handleDeleteForce(value) {
+      this.$emit('delete-force', value, 0)
+    },
+
     /* 终端 */
     handleTerminal(value) {
       this.$emit('terminal', value)
@@ -76,6 +86,11 @@ export default {
     /* 日志 */
     handleLog(value) {
       this.$emit('log', value)
+    },
+
+    /* 将选中的值传给父组件 */
+    handleSelectionChange(value) {
+      this.$emit('select-change', value)
     },
 
     /* 日期时间格式化 */
