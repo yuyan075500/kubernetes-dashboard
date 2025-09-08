@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="tableData" tooltip-effect="dark" style="width: 100%; margin-top:10px;" size="mini" border>
+  <el-table :data="tableData" tooltip-effect="dark" style="width: 100%; margin-top:10px;" size="mini" border @selection-change="handleSelectionChange">
     <el-table-column type="selection" width="40" />
     <el-table-column show-overflow-tooltip prop="metadata.name" label="名称" min-width="5%" />
     <el-table-column show-overflow-tooltip prop="metadata.namespace" label="名称空间" min-width="5%" />
@@ -12,6 +12,7 @@
     <el-table-column label="操作" min-width="5%" align="center">
       <template slot-scope="scope">
         <el-button size="mini" type="text" @click="handleYAML(scope.row)">YAML</el-button>
+        <el-button size="mini" type="text" @click="handleDelete(scope.row)">删除</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -31,15 +32,19 @@ export default {
     }
   },
   methods: {
-
-    /* 编辑按钮 */
-    handleEdit(value) {
-      this.$emit('edit', value)
+    /* 删除按钮 */
+    handleDelete(value) {
+      this.$emit('delete', value)
     },
 
     /* 编辑 YAML按钮 */
     handleYAML(value) {
       this.$emit('yaml', value)
+    },
+
+    /* 将选中的值传给父组件 */
+    handleSelectionChange(value) {
+      this.$emit('select-change', value)
     },
 
     /* 日期时间格式化 */

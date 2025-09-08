@@ -14,7 +14,10 @@
     <!-- 表格头 -->
     <el-row :gutter="10">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="el-icon-plus" size="mini">新增</el-button>
+        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd">新增</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button type="primary" plain icon="el-icon-delete" size="mini" @click="handleDelete(selectData)">删除</el-button>
       </el-col>
     </el-row>
 
@@ -22,7 +25,9 @@
     <deployment-table
       v-loading="loading"
       :table-data="tableData"
+      @select-change="handleSelect"
       @yaml="handleYAML"
+      @delete="handleDelete"
     />
 
     <!-- 分页 -->
@@ -37,28 +42,47 @@
       @current-change="handlePageChange"
     />
 
+    <!-- 新增 -->
     <el-dialog
-      v-if="yamlDialog"
+      v-if="yamlAddDialog"
       :title="formTitle"
-      :visible.sync="yamlDialog"
+      :visible.sync="yamlAddDialog"
       :show-close="false"
       width="1000px"
       :close-on-click-modal="false"
       @close="handleClose"
     >
-      <!-- YAML 组件 -->
       <yaml-editor
         ref="form"
         :value="currentValue"
-        @close="yamlDialog = false"
+        @close="yamlAddDialog = false"
+        @submit="handleAddSubmit"
+      />
+    </el-dialog>
+
+    <!-- 更新 -->
+    <el-dialog
+      v-if="yamlUpdateDialog"
+      :title="formTitle"
+      :visible.sync="yamlUpdateDialog"
+      :show-close="false"
+      width="1000px"
+      :close-on-click-modal="false"
+      @close="handleClose"
+    >
+      <yaml-editor
+        ref="form"
+        :value="currentValue"
+        @close="yamlUpdateDialog = false"
       />
     </el-dialog>
   </div>
 </template>
 
 <script>
+import { Message } from 'element-ui'
 import { formatYAML } from '@/utils/yaml'
-import { getDeploymentList, getDeploymentYAML } from '@/api/controller/deployment'
+import { addDeployment, deleteDeployments, getDeploymentList, getDeploymentYAML } from '@/api/controller/deployment'
 import DeploymentTable from './table'
 
 export default {
@@ -76,8 +100,10 @@ export default {
         page: 1,
         limit: 10
       },
+      selectData: [],
       formTitle: '',
-      yamlDialog: false,
+      yamlAddDialog: false,
+      yamlUpdateDialog: false,
       currentValue: undefined
     }
   },
@@ -119,10 +145,98 @@ export default {
       this.getList()
     },
 
+    /* 更新选中的数据 */
+    handleSelect(value) {
+      this.selectData = value
+    },
+
+    /* 新增 */
+    handleAdd() {
+      // 打开Dialog
+      this.yamlAddDialog = true
+      // 更改Dialog标题
+      this.formTitle = '新增'
+      this.currentValue = undefined
+    },
+
+    /* 表单提交 */
+    handleAddSubmit(value) {
+      this.loading = true
+      addDeployment(value).then((res) => {
+        if (res.code === 0) {
+          Message({
+            message: res.msg,
+            type: 'success',
+            duration: 1000
+          })
+          this.loading = false
+          this.handleClose()
+        }
+      }, () => {
+        this.loading = false
+      })
+    },
+
+    /* 删除 */
+    handleDelete(value) {
+      const result = this.generateDeploymentDeleteData(value)
+      this.$confirm('点击确认将删除当前工作负载。', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        showClose: false,
+        closeOnClickModal: false,
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = '删除中...'
+            deleteDeployments(result).then((res) => {
+              if (res.code === 0) {
+                Message({
+                  message: res.msg,
+                  type: 'success',
+                  duration: 1000
+                })
+                instance.confirmButtonLoading = false
+                done()
+                this.getList()
+              }
+            }).finally(() => {
+              instance.confirmButtonLoading = false
+              instance.confirmButtonText = '确定'
+            })
+          } else {
+            done()
+          }
+        }
+      }).then(() => {}).catch(() => {})
+    },
+
+    generateDeploymentDeleteData(value) {
+      const result = {
+        deployments: []
+      }
+
+      if (Object.prototype.toString.call(value) === '[object Object]') {
+        result.deployments.push({
+          name: value.metadata.name,
+          namespace: value.metadata.namespace
+        })
+      } else if (Array.isArray(value)) {
+        value.forEach(item => {
+          result.deployments.push({
+            name: item.metadata.name,
+            namespace: item.metadata.namespace
+          })
+        })
+      }
+      return result
+    },
+
     /* YAML */
     handleYAML(value) {
       // 打开Dialog
-      this.yamlDialog = true
+      this.yamlUpdateDialog = true
       // 更改Dialog标题
       this.formTitle = '编辑'
       // 获取YAML
@@ -134,7 +248,8 @@ export default {
     /* Dialog 关闭 */
     handleClose() {
       // 关闭所有 Dialog
-      this.yamlDialog = false
+      this.yamlUpdateDialog = false
+      this.yamlAddDialog = false
       // 清空表单数据
       this.currentValue = undefined
       // 获取最新数据
