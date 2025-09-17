@@ -13,6 +13,7 @@
       <template slot-scope="scope">
         <el-button size="mini" type="text" @click="handleYAML(scope.row)">YAML</el-button>
         <el-button size="mini" type="text" @click="handleDelete(scope.row)">删除</el-button>
+        <el-button size="mini" type="text" @click="handleScale(scope.row)">伸缩</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -40,6 +41,11 @@ export default {
     /* 编辑 YAML按钮 */
     handleYAML(value) {
       this.$emit('yaml', value)
+    },
+
+    /* 伸缩按钮 */
+    handleScale(value) {
+      this.$emit('scale', value)
     },
 
     /* 将选中的值传给父组件 */

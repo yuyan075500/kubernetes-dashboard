@@ -1,5 +1,6 @@
 <template>
   <el-form ref="form">
+    <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
     <div class="cm-wrapper">
       <codemirror
         ref="cm"
@@ -18,6 +19,7 @@
 
 <script>
 import { codemirror } from 'vue-codemirror'
+import yaml from 'js-yaml'
 
 // CodeMirror 核心样式
 import 'codemirror/lib/codemirror.css'
@@ -71,11 +73,14 @@ export default {
         foldGutter: true
       },
       editorValue: this.value,
-      folded: false
+      folded: false,
+      errorMessage: ''
     }
   },
   watch: {
     editorValue(newVal) {
+      this.errorMessage = ''
+
       if (newVal && !this.folded) {
         this.$nextTick(() => {
           const cm = this.$refs.cm.codemirror
@@ -95,6 +100,27 @@ export default {
 
     /* 提交按钮 */
     handleSubmit() {
+      this.errorMessage = ''
+
+      if (!this.editorValue.trim()) {
+        this.errorMessage = '内容不能为空'
+        return
+      }
+      try {
+        yaml.load(this.editorValue)
+      } catch (e) {
+        this.errorMessage = `格式错误: ${e.message}`
+        if (e.mark && e.mark.line) {
+          const cm = this.$refs.cm.codemirror
+          if (cm) {
+            cm.scrollIntoView({ line: e.mark.line, ch: 0 }, 200)
+            cm.setCursor(e.mark.line, e.mark.column || 0)
+            cm.focus()
+          }
+        }
+        return
+      }
+
       this.$emit('submit', this.editorValue)
     },
 
@@ -140,4 +166,12 @@ export default {
   height: 40px;
 }
 
+.error-message {
+  color: #f56c6c;
+  font-size: 12px;
+  margin: 5px 0;
+  padding: 5px;
+  background-color: #fef0f0;
+  border-radius: 4px;
+}
 </style>

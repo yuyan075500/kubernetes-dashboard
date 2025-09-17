@@ -18,6 +18,15 @@ export function deleteDeployments(data) {
   })
 }
 
+// 修改 Deployment
+export function updateDeployment(data) {
+  return request({
+    url: '/api/v1/kubernetes/deployment',
+    method: 'put',
+    data
+  })
+}
+
 // 获取 Deployment 列表
 export function getDeploymentList(params) {
   return request({

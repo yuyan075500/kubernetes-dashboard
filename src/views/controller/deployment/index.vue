@@ -19,6 +19,12 @@
       <el-col :span="1.5">
         <el-button type="primary" plain icon="el-icon-delete" size="mini" @click="handleDelete(selectData)">删除</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button type="primary" plain size="mini">
+          <svg-icon icon-class="el-icon-shensuo" />
+          伸缩
+        </el-button>
+      </el-col>
     </el-row>
 
     <!-- 表格 -->
@@ -28,6 +34,7 @@
       @select-change="handleSelect"
       @yaml="handleYAML"
       @delete="handleDelete"
+      @scale="handleScale"
     />
 
     <!-- 分页 -->
@@ -74,6 +81,26 @@
         ref="form"
         :value="currentValue"
         @close="yamlUpdateDialog = false"
+        @submit="handleUpdateSubmit"
+      />
+    </el-dialog>
+
+    <!-- 副本数 -->
+    <el-dialog
+      v-if="replicasUpdateDialog"
+      :title="formTitle"
+      :visible.sync="replicasUpdateDialog"
+      :show-close="false"
+      width="500px"
+      :close-on-click-modal="false"
+      @closed="handleClose"
+    >
+      <replicas-form
+        ref="form"
+        :form="currentValue"
+        :loading="loading"
+        @close="handleClose"
+        @submit="handleUpdateSubmit"
       />
     </el-dialog>
   </div>
@@ -82,12 +109,14 @@
 <script>
 import { Message } from 'element-ui'
 import { formatYAML } from '@/utils/yaml'
-import { addDeployment, deleteDeployments, getDeploymentList, getDeploymentYAML } from '@/api/controller/deployment'
+import { addDeployment, deleteDeployments, updateDeployment, getDeploymentList, getDeploymentYAML } from '@/api/controller/deployment'
 import DeploymentTable from './table'
+import ReplicasForm from './form'
 
 export default {
   components: {
-    DeploymentTable
+    DeploymentTable,
+    ReplicasForm
   },
   data() {
     return {
@@ -104,6 +133,7 @@ export default {
       formTitle: '',
       yamlAddDialog: false,
       yamlUpdateDialog: false,
+      replicasUpdateDialog: false,
       currentValue: undefined
     }
   },
@@ -159,10 +189,40 @@ export default {
       this.currentValue = undefined
     },
 
+    handleScale(value) {
+      // 打开Dialog
+      this.replicasUpdateDialog = true
+      // 更改Dialog标题
+      this.formTitle = '伸缩'
+      try {
+        this.currentValue = JSON.parse(JSON.stringify(value))
+      } catch (e) {
+        this.currentValue = null
+      }
+    },
+
     /* 表单提交 */
     handleAddSubmit(value) {
       this.loading = true
       addDeployment(value).then((res) => {
+        if (res.code === 0) {
+          Message({
+            message: res.msg,
+            type: 'success',
+            duration: 1000
+          })
+          this.loading = false
+          this.handleClose()
+        }
+      }, () => {
+        this.loading = false
+      })
+    },
+
+    /* 表单提交 */
+    handleUpdateSubmit(value) {
+      this.loading = true
+      updateDeployment(value).then((res) => {
         if (res.code === 0) {
           Message({
             message: res.msg,
@@ -250,6 +310,7 @@ export default {
       // 关闭所有 Dialog
       this.yamlUpdateDialog = false
       this.yamlAddDialog = false
+      this.replicasUpdateDialog = false
       // 清空表单数据
       this.currentValue = undefined
       // 获取最新数据
